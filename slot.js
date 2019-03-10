@@ -1,6 +1,51 @@
 
 
 var slotsList= new Array();
+//generate time slots
+$(document).ready(function(){
+  var startTime=11;
+  var slotsToGenerate = 6;
+
+  //get the button text, like "11am - 12pm"
+  for(var i=0;i<slotsToGenerate;i++)
+  {
+    var para = document.createElement("BUTTON");
+    var buttonText  ="";
+    var beginTime =i+startTime;
+    var endTime=i+startTime+1;
+    console.log(beginTime);
+    console.log(endTime);
+    if(endTime<12)
+    {     
+      buttonText = beginTime + 'am - '+ endTime + 'am' ;
+    }else if(endTime===12)
+    {
+      buttonText = beginTime + 'am - '+ endTime + 'pm' ;
+    }else if(beginTime===12)
+    {
+      endTime = endTime-12;
+      buttonText = beginTime + 'pm - '+ endTime + 'pm';
+    }
+    else if(beginTime>12)
+    {
+      beginTime = beginTime-12;
+      endTime = endTime-12;
+      buttonText = beginTime +'pm - '+ endTime + 'pm' ;
+    }
+    var text = document.createTextNode(buttonText);
+    para.appendChild(text);
+
+    var element = document.getElementById("slotsDiv");
+    element.appendChild(para);
+
+    para.setAttribute("class","btn modal-trigger");
+    para.setAttribute("data-target", "modal1");
+    var btnIdNumber = i+3;
+    para.id="btn"+btnIdNumber;
+  }
+ 
+})
+
 
 //Modal Window
 document.addEventListener('DOMContentLoaded', function() { 
@@ -12,8 +57,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 //capture the button who opens the modal window
 var capturedBtnId = "";
-$('.btn').click('click', function(){
-  capturedBtnId=$(this).attr('id');
+document.getElementById("slotsDiv").addEventListener("click", function (event) {
+  
+  capturedBtnId=event.target.id
 
   //if slot already filled
   if(document.getElementById(capturedBtnId).style.backgroundColor === "red")
@@ -22,12 +68,14 @@ $('.btn').click('click', function(){
     for(var i=0; i<slotsList.length;i++){
       if(slotsList[i].btnId == capturedBtnId)
       {
+        console.log("found it!"+slotsList[i].name);
         document.getElementById("name").value = slotsList[i].name;
         document.getElementById("phone_number").value = slotsList[i].phoneNumber;
         break;
       }
     }
   }
+
 })
 
 
@@ -52,11 +100,17 @@ document.getElementById('ModalSubmit').addEventListener('click', function(){
       break;
     }
   }
-
+  console.log(foundIt);
   if(foundIt === "false" && slot.name !=="" && slot.phoneNumber !=="")
   {
     slotsList.push(slot);
     document.getElementById(capturedBtnId).style.backgroundColor = "red";
+  }
+
+
+  for(var i=0; i<slotsList.length;i++)
+  {
+    console.log(slotsList[i]);
   }
 
   cleanModal();
